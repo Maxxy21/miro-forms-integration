@@ -1,16 +1,11 @@
-import {Entity, PrimaryColumn, Column} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, ManyToOne} from 'typeorm';
+import {Team} from "./Team";
 
 @Entity()
 export class User {
-    @PrimaryColumn()
-    id?: string;
+    @PrimaryGeneratedColumn()
+    id?: number;
 
-    @Column({nullable: true})
-    teamId?: string;
-
-    @Column({nullable: true})
-    teamName?: string;
-
-
-    // ... other fields ...
+    @ManyToOne(() => Team, team => team.users)
+    team?: Team;
 }
