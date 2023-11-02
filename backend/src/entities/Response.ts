@@ -1,10 +1,12 @@
 import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn} from 'typeorm';
-import {User} from './User'; // Hypothetical User entity
+import {MiroUser} from './MiroUser';
+import {Board} from './Board';          // Make sure you import the Board entity
+import {Questionnaire} from './Questionnaire';  // Make sure you import the Questionnaire entity
 
 @Entity()
 export class Response {
-    @PrimaryGeneratedColumn()
-    id?: number;
+    @PrimaryGeneratedColumn('uuid')
+    id?: string;
 
     @Column()
     questionId?: number;
@@ -12,12 +14,20 @@ export class Response {
     @Column()
     userId?: number;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => MiroUser)
     @JoinColumn({name: 'userId'})
-    user?: User;
+    user?: MiroUser;
 
     @Column()
     teamId?: string;
+
+    @ManyToOne(() => Board)            // Adding relationship with Board
+    @JoinColumn({name: 'boardId'})     // You might need to add a new column for boardId
+    board?: Board;
+
+    @ManyToOne(() => Questionnaire)    // Adding relationship with Questionnaire
+    @JoinColumn({name: 'questionnaireId'})  // You might need to add a new column for questionnaireId
+    questionnaire?: Questionnaire;
 
     @Column("text")
     answer?: string;

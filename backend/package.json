@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mirohq/miro-api": "^2.0.0",
+    "@mirohq/miro-api": "^2.0.2",
     "@types/dotenv": "^8.2.0",
     "@types/express-session": "^1.17.9",
     "@types/node": "^20.8.8",

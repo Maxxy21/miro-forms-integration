@@ -1,5 +1,5 @@
 import express, {NextFunction, Request, Response} from 'express';
-import {User} from "../entities/User";
+import {MiroUser} from "../entities/MiroUser";
 import dataSource from "../ormconfig";
 import {Questionnaire} from "../entities/Questionnaire";
 import {Team} from "../entities/Team";
@@ -7,13 +7,35 @@ import passport from "../passportSetup";
 
 const router = express.Router();
 
-
 function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
     if (req.isAuthenticated()) {
         return next();
     }
     res.redirect('/login');  // Or wherever you want to redirect unauthenticated users
 }
+
+router.get('/api/verifyUser', async (req, res) => {
+    const userId = req.query.userId;
+
+    if (typeof userId !== 'string') {
+        // Handle the error (send a response or throw an exception)
+        return res.status(400).send("Invalid userId");
+    }
+
+    if (!userId) {
+        return res.status(400).json({message: 'userId is missing in the request'});
+    }
+
+
+    const user = await dataSource.manager.findOne(MiroUser, {where: {id: userId}});
+
+    if (user) {
+        res.status(200).json({message: 'MiroUser exists', verified: true});
+    } else {
+        res.status(404).json({message: 'MiroUser not found', verified: false});
+    }
+});
+
 
 router.post('/api/teams/login', async (req, res) => {
     const {teamName} = req.body;
@@ -29,11 +51,11 @@ router.post('/api/teams/login', async (req, res) => {
         await dataSource.manager.save(Team, team);
     }
 
-    let user = await dataSource.manager.findOne(User, {where: {team: team}});
+    let user = await dataSource.manager.findOne(MiroUser, {where: {team: team}});
 
     if (!user) {
-        user = dataSource.manager.create(User, {team});
-        await dataSource.manager.save(User, user);
+        user = dataSource.manager.create(MiroUser, {team});
+        await dataSource.manager.save(MiroUser, user);
     }
 
     // You don't need another 'if (team)' check here as it will always exist at this point
@@ -64,6 +86,21 @@ router.post('/api/questionnaire/submit', async (req, res) => {
     }
 });
 
+router.post('/api/miro/userInfo', async (req, res) => {
+    const {userInfo, onlineUsers} = req.body;
+
+    const user = dataSource.manager.create(MiroUser, userInfo);
+    await dataSource.manager.save(MiroUser, user);
+
+
+    for (const onlineUser of onlineUsers) {
+        const user = dataSource.manager.create(MiroUser, onlineUser);
+        await dataSource.manager.save(MiroUser, user);
+    }
+
+    res.status(200).json({message: 'Miro user info saved successfully'});
+});
+
 
 router.get('/auth/miro',
     passport.authenticate('oauth2') // Start authentication
@@ -82,12 +119,9 @@ router.get('/logout', (req, res) => {
 });
 
 
-
 router.get('/some_protected_route', ensureAuthenticated, (req, res) => {
-    // Your code here
+//Todo
 });
-
-
 
 
 export default router;

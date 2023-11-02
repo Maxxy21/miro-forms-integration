@@ -1,10 +1,11 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne} from 'typeorm';
 import {Team} from "./Team";
+import {Board} from "./Board";
 
 @Entity()
 export class Questionnaire {
-    @PrimaryGeneratedColumn()
-    id?: number;
+    @PrimaryGeneratedColumn('uuid')
+    id?: string;
 
     @ManyToOne(() => Team, team => team.questionnaires)
     team?: Team;
@@ -29,4 +30,7 @@ export class Questionnaire {
 
     @Column('text')
     solutions?: string;
+
+    @OneToOne(() => Board, board => board.questionnaire)
+    board?: Board;
 }

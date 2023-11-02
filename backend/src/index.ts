@@ -6,6 +6,7 @@ import morgan from "morgan";
 import cors from 'cors';
 import session from 'express-session';
 import passport from "./passportSetup";
+import Miro from "@mirohq/miro-api";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -20,6 +21,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use(morgan('dev'));
+
+const miro = new Miro()
+
 
 app.use('/', authRoutes);
 

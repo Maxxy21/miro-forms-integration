@@ -34,7 +34,7 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@mirohq/miro-api@^2.0.0":
+"@mirohq/miro-api@^2.0.2":
   version "2.0.2"
   resolved "https://registry.npmjs.org/@mirohq/miro-api/-/miro-api-2.0.2.tgz"
   integrity sha512-mZRd9Ihh9y00LPPiGpBX/x2/BHwmOX5KXytyvD346tQ/O2eiJRzP/PfPbPY6aUDsb54GSEVgmWk/1jpd6qYeSQ==
