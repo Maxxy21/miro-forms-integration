@@ -6,9 +6,16 @@ interface TeamLoginProps {
 
 const TeamLogin: React.FC<TeamLoginProps> = ({onLogin}) => {
     const [teamName, setTeamName] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async () => {
+        setLoading(true);
         // Call backend to authenticate team name
+        if (!teamName) {
+            alert("Please enter a team name.");
+            return;
+        }
+
         console.log("Button clicked");
         const response = await fetch('http://localhost:4000/api/teams/login', {
             method: 'POST',
@@ -20,10 +27,12 @@ const TeamLogin: React.FC<TeamLoginProps> = ({onLogin}) => {
             console.log("Logged in", response.status);
             const data = await response.json();
             localStorage.setItem('teamId', data.teamId);
-            onLogin(); // Call the onLogin callback to update parent state
+            onLogin();
         } else {
-            // Handle error or notify user of login failure
+            const data = await response.json();
+            alert(data.error || "Login failed!");
         }
+        setLoading(false);
     };
 
 
@@ -37,10 +46,15 @@ const TeamLogin: React.FC<TeamLoginProps> = ({onLogin}) => {
                            className="mt-1 p-2 w-full border rounded-md text-sm" type="text"
                            placeholder="Team Name"/>
                 </label>
-                <button type={"button"} onClick={handleLogin}
-                        className="bg-blue-500 hover:bg-blue-600 text-white text-sm py-2 px-4 rounded-md">
-                    Login/Register
-                </button>
+
+                {loading ? (
+                    <span>Loading...</span>
+                ) : (
+                    <button type={"button"} onClick={handleLogin}
+                            className="bg-blue-500 hover:bg-blue-600 text-white text-sm py-2 px-4 rounded-md">
+                        Login/Register
+                    </button>
+                )}
             </div>
         </div>
     );
